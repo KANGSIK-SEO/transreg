@@ -7,12 +7,8 @@ import pytest
 
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 README_PATH = os.path.join(REPO_ROOT, "README.md")
-TRACK_A_JSON = os.path.join(REPO_ROOT, "reports", "track_a_results.json")
-TRACK_B_JSON = os.path.join(REPO_ROOT, "reports", "track_b_results.json")
-REPORTS_DIR = os.path.join(REPO_ROOT, "reports")
-FIGURES_DIR = os.path.join(REPO_ROOT, "reports", "figures")
-
-
+TRACK_A_JSON = os.path.join(REPO_ROOT, "track_a", "reports", "track_a_results.json")
+TRACK_B_JSON = os.path.join(REPO_ROOT, "track_b", "reports", "track_b_results.json")
 @pytest.fixture(scope="module")
 def readme_content():
     assert os.path.exists(README_PATH), "README.md 파일이 존재하지 않습니다."
@@ -71,23 +67,21 @@ def test_readme_error_analysis_count_sync(readme_content, track_a_data):
 def test_required_artifacts_and_figures_exist():
     """필수 4종 리포트와 4종 시각화 그래프 파일이 실제 존재하고 정상 크기(>0 바이트)인지 검증."""
     required_reports = [
-        "diagnosis_report.md",
-        "error_analysis_table.md",
-        "baseline_comparison_report.md",
-        "data_leakage_evidence.md",
+        os.path.join(REPO_ROOT, "reports", "diagnosis_report.md"),
+        os.path.join(REPO_ROOT, "track_a", "reports", "error_analysis_table.md"),
+        os.path.join(REPO_ROOT, "track_b", "reports", "baseline_comparison_report.md"),
+        os.path.join(REPO_ROOT, "reports", "data_leakage_evidence.md"),
     ]
-    for r in required_reports:
-        p = os.path.join(REPORTS_DIR, r)
-        assert os.path.exists(p), f"필수 리포트 파일 누락: {r}"
-        assert os.path.getsize(p) > 200, f"리포트 내용이 비어있거나 너무 작음: {r}"
+    for path in required_reports:
+        assert os.path.exists(path), f"필수 리포트 파일 누락: {path}"
+        assert os.path.getsize(path) > 200, f"리포트 내용이 비어있거나 너무 작음: {path}"
 
     required_figures = [
-        "train_val_loss_curves.png",
-        "timeseries_prediction_vs_actual.png",
-        "baseline_comparison_barplot.png",
-        "error_analysis_gallery.png",
+        os.path.join(REPO_ROOT, "reports", "figures", "train_val_loss_curves.png"),
+        os.path.join(REPO_ROOT, "track_b", "reports", "figures", "timeseries_prediction_vs_actual.png"),
+        os.path.join(REPO_ROOT, "track_b", "reports", "figures", "baseline_comparison_barplot.png"),
+        os.path.join(REPO_ROOT, "track_a", "reports", "figures", "error_analysis_gallery.png"),
     ]
-    for fig in required_figures:
-        fp = os.path.join(FIGURES_DIR, fig)
-        assert os.path.exists(fp), f"필수 시각화 그래프 파일 누락: {fig}"
-        assert os.path.getsize(fp) > 10000, f"이미지 파일 크기가 비정상(손상 의심): {fig}"
+    for path in required_figures:
+        assert os.path.exists(path), f"필수 시각화 그래프 파일 누락: {path}"
+        assert os.path.getsize(path) > 10000, f"이미지 파일 크기가 비정상(손상 의심): {path}"

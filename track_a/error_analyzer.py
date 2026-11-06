@@ -13,7 +13,7 @@ import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
 import numpy as np
-from src.track_a_transfer.dataset import CLASS_NAMES
+from track_a.dataset import CLASS_NAMES
 
 
 ERROR_TAGS = {

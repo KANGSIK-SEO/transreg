@@ -19,13 +19,13 @@ FORBIDDEN_TERMS = [
 
 def test_no_forbidden_terminology_in_reports():
     repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-    reports_dir = os.path.join(repo_root, "reports")
-
-    if not os.path.exists(reports_dir):
-        pytest.skip("reports 디렉토리가 아직 생성되지 않았습니다.")
 
     violations = []
-    for root, _, files in os.walk(reports_dir):
+    found_reports_dir = False
+    for root, _, files in os.walk(repo_root):
+        if os.path.basename(root) != "reports":
+            continue
+        found_reports_dir = True
         for f in files:
             if f.endswith(".md"):
                 file_path = os.path.join(root, f)
@@ -35,5 +35,8 @@ def test_no_forbidden_terminology_in_reports():
                         matches = re.findall(pattern, content)
                         if matches:
                             violations.append(f"{f}: 발견된 비표준 용어 {matches}")
+
+    if not found_reports_dir:
+        pytest.skip("reports 디렉토리가 아직 생성되지 않았습니다.")
 
     assert len(violations) == 0, f"용어 통일성 위반 발견: {violations}"

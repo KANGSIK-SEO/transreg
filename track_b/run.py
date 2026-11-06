@@ -7,7 +7,7 @@
 4. 베이스라인 모델 사전 평가 (Naive, SMA 3종, EMA 3종, Linear Regression)
 5. 딥러닝 모델 학습 (LSTM, GRU, Attention-LSTM)
 6. MAE, RMSE, MAPE 지표 비교 및 베이스라인 대비 % 우수도 정량화
-7. 리포트(reports/baseline_comparison_report.md) 및 시각화 2종 생성
+7. 리포트(track_b/reports/baseline_comparison_report.md) 및 시각화 2종 생성
 """
 
 import os
@@ -20,10 +20,10 @@ import json
 import numpy as np
 
 import torch
-from src.track_b_timeseries.data_loader import TimeSeriesDataLoader
-from src.track_b_timeseries.baselines import evaluate_all_baselines
-from src.track_b_timeseries.models import LSTMRegressor, GRURegressor, AttentionLSTMRegressor
-from src.track_b_timeseries.trainer import TimeSeriesTrainer
+from track_b.data_loader import TimeSeriesDataLoader
+from track_b.baselines import evaluate_all_baselines
+from track_b.models import LSTMRegressor, GRURegressor, AttentionLSTMRegressor
+from track_b.trainer import TimeSeriesTrainer
 from src.common.metrics import evaluate_regression_metrics, calculate_relative_improvement
 from src.common.visualizer import (
     plot_timeseries_prediction_vs_actual,
@@ -31,7 +31,7 @@ from src.common.visualizer import (
 )
 
 
-def run_track_b(epochs: int = 40, batch_size: int = 32, save_dir: str = "reports") -> dict:
+def run_track_b(epochs: int = 40, batch_size: int = 32, save_dir: str = "track_b/reports") -> dict:
     print("\n" + "=" * 60)
     print(">>> [Track B] 시계열 예측 & 베이스라인 비교 파이프라인 시작")
     print("=" * 60)
@@ -41,7 +41,7 @@ def run_track_b(epochs: int = 40, batch_size: int = 32, save_dir: str = "reports
     print(f"[*] 실행 디바이스: {device}")
 
     # 1. 데이터 로드 및 누수 방지 전처리
-    cache_path = os.path.abspath("data/cache/AAPL_3y_daily.csv")
+    cache_path = os.path.abspath("track_b/data/AAPL_3y_daily.csv")
     loader = TimeSeriesDataLoader(
         ticker="AAPL",
         start_date="2021-01-01",

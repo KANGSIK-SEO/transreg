@@ -2,7 +2,7 @@
 
 import numpy as np
 import pytest
-from src.track_b_timeseries.baselines import (
+from track_b.baselines import (
     NaiveForecastBaseline,
     SMABaseline,
     EMABaseline,

@@ -4,7 +4,7 @@
 1. CIFAR-10 5개 클래스 서브셋 로드 (클래스당 35장 Train, 10장 Validation, 25장 Test = 클래스당 50장 미만 Few-shot 환경)
 2. Linear Probing (FC만 학습) vs Fine-tuning (전체 레이어 학습) 실행 및 성능 비교
 3. 오분류 이미지 추출 (30건 이상) 및 실패 원인 태깅
-4. 오차 분석 리포트(reports/error_analysis_table.md) 및 갤러리(reports/figures/error_analysis_gallery.png) 생성
+4. 오차 분석 리포트(track_a/reports/error_analysis_table.md) 및 갤러리 생성
 """
 
 import os
@@ -17,14 +17,14 @@ import json
 import torch
 
 from torch.utils.data import DataLoader
-from src.track_a_transfer.dataset import FewShotImageDataset, CLASS_NAMES
-from src.track_a_transfer.model import build_transfer_model, get_trainable_parameters_count
-from src.track_a_transfer.trainer import TransferTrainer
-from src.track_a_transfer.error_analyzer import ErrorAnalyzer
+from track_a.dataset import FewShotImageDataset, CLASS_NAMES
+from track_a.model import build_transfer_model, get_trainable_parameters_count
+from track_a.trainer import TransferTrainer
+from track_a.error_analyzer import ErrorAnalyzer
 from src.common.visualizer import plot_error_analysis_gallery
 
 
-def run_track_a(epochs: int = 12, batch_size: int = 16, save_dir: str = "reports") -> dict:
+def run_track_a(epochs: int = 12, batch_size: int = 16, save_dir: str = "track_a/reports") -> dict:
     print("\n" + "=" * 60)
     print(">>> [Track A] Few-shot 이미지 전이학습 & 오차 분석 파이프라인 시작")
     print("=" * 60)

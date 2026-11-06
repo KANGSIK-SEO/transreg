@@ -23,7 +23,7 @@ class TimeSeriesDataLoader:
         ticker: str = "AAPL",
         start_date: str = "2021-01-01",
         end_date: str = "2024-01-01",
-        cache_path: str = "data/cache/AAPL_3y_daily.csv",
+        cache_path: str = "track_b/data/AAPL_3y_daily.csv",
         train_ratio: float = 0.7,
         val_ratio: float = 0.1,
         test_ratio: float = 0.2,

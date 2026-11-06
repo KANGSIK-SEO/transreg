@@ -20,7 +20,7 @@ $$\text{베이스라인 설정} \longrightarrow \text{딥러닝 모델 적용} \
 본 저장소는 사용자의 2단계 검증 레이어를 엄격히 준수하여 구축되었습니다:
 
 ### [검증 Layer 1] README와 실제 코드의 100% 일치 보증
-- README에 기재된 **모든 실험 수치(Loss, Accuracy, MAE, RMSE, MAPE, 파라미터 수, 개선율)**는 실제 파이프라인(`scripts/run_all_pipeline.py`)을 실행하여 출력된 JSON 결과값(`reports/track_a_results.json`, `reports/track_b_results.json`)과 **단 1의 오차도 없이 1:1 완벽 동기화**되었습니다.
+- README에 기재된 **모든 실험 수치(Loss, Accuracy, MAE, RMSE, MAPE, 파라미터 수, 개선율)**는 실제 파이프라인(`scripts/run_all_pipeline.py`) 실행 결과와 동기화됩니다. Track별 JSON 결과는 각 폴더의 `reports/`에 저장됩니다.
 - 본 리포트의 모든 실행 명령어와 파일 경로는 실제 저장소에서 에러 없이 100% 재현됩니다.
 
 ### [검증 Layer 2] Wirelog 기반 `implementation-skill` 논리적 검증 완료
@@ -39,42 +39,28 @@ transreg/
 ├── .gitignore                      # Git 추적 제외 설정
 ├── requirements.txt                # 재현을 위한 의존성 패키지 명세
 ├── README.md                       # 종합 설명서 및 검증 증거 리포트 (본 문서)
-├── scripts/                        # 파이프라인 실행 스크립트
-│   ├── run_all_pipeline.py         # 전체 파이프라인 원클릭 실행 및 리포트/시각화 자동 생성
-│   ├── run_track_a_transfer.py     # Track A (전이학습 & 오차분석) 독립 실행
-│   └── run_track_b_timeseries.py   # Track B (시계열 & 베이스라인 비교) 독립 실행
-├── src/                            # 핵심 소스 코드
-│   ├── common/                     # 공통 유틸리티
-│   │   ├── metrics.py              # MAE, RMSE, MAPE, 개선율 정량화 지표 모듈
-│   │   └── visualizer.py           # 필수 4종 시각화 플롯팅 모듈
-│   ├── track_a_transfer/           # Track A: 이미지 전이학습
-│   │   ├── dataset.py              # Few-shot 데이터셋 로더 (클래스당 35장 < 50장 엄수)
-│   │   ├── model.py                # ResNet-18 (Linear Probing vs Fine-tuning)
-│   │   ├── trainer.py              # 전이학습 트레이너 및 손실 추적
-│   │   └── error_analyzer.py       # 오분류 이미지 추출, 태깅(37건) 및 오차 분석 엔진
-│   └── track_b_timeseries/         # Track B: 시계열 예측
-│       ├── data_loader.py          # 시간순 7:1:2 분할 & Train 전용 Scaler Fit (누수 방지)
-│       ├── baselines.py            # 베이스라인 4종 (Naive, SMA, EMA, Linear Regression)
-│       ├── models.py               # 딥러닝 3종 (LSTM, GRU, Attention-LSTM)
-│       └── trainer.py              # 시계열 회귀 모델 학습자
-├── tests/                          # TDD 자동화 단위 테스트 (15/15 통과)
-│   ├── test_baselines.py           # 베이스라인 모델 수식 정확성 검증 (4/4 PASS)
-│   ├── test_data_leakage.py        # Look-ahead Bias 및 Train Fit 누수 방지 검증 (3/3 PASS)
-│   ├── test_fewshot.py             # Few-shot 샘플 수(< 50장) 제약조건 검증 (2/2 PASS)
-│   ├── test_metrics.py             # 회귀 및 상대 개선율 계산 검증 (5/5 PASS)
-│   └── test_terminology.py         # Train/Validation/Test 표준 용어 통일성 검증 (1/1 PASS)
-├── data/cache/                     # 데이터 캐시 (오프라인/네트워크 장애 대비)
-│   └── AAPL_3y_daily.csv           # Apple Inc. 3개년 정제 일봉 데이터 (753개 거래일)
-└── reports/                        # 최종 결과물 리포트 및 시각화
-    ├── diagnosis_report.md         # 편향/분산(Bias/Variance) 진단 리포트
-    ├── error_analysis_table.md     # 오차 분석표 (37건 상세 태깅 및 실패 원인 통계)
-    ├── baseline_comparison_report.md# 베이스라인 vs 딥러닝 성능 비교 리포트
-    ├── data_leakage_evidence.md    # 데이터 누수 방지 4대 체크포인트 준수 증거
-    └── figures/                    # 필수 4종 시각화 그래프
-        ├── train_val_loss_curves.png          # 1. Train/Validation Loss 곡선 (편향/분산 진단)
-        ├── timeseries_prediction_vs_actual.png # 2. 예측 vs 실제 주가 그래프 (파란선/빨간선)
-        ├── baseline_comparison_barplot.png    # 3. 베이스라인 vs 딥러닝 비교 막대그래프
-        └── error_analysis_gallery.png         # 4. 오분류 이미지 샘플 갤러리 (태그별)
+├── scripts/
+│   └── run_all_pipeline.py         # Track A와 B를 차례로 실행하고 통합 리포트를 생성
+├── track_a/                        # Track A 관련 코드를 한곳에 모음
+│   ├── run.py                      # Track A 단독 실행
+│   ├── dataset.py                  # Few-shot 이미지 데이터 준비
+│   ├── model.py                    # ResNet-18 전이학습 모델
+│   ├── trainer.py                  # 이미지 모델 학습
+│   ├── error_analyzer.py           # 오분류 추출 및 원인 태깅
+│   ├── tests/                      # Track A 테스트
+│   └── reports/                    # Track A 결과 JSON, 표, 이미지 갤러리
+├── track_b/                        # Track B 관련 코드를 한곳에 모음
+│   ├── run.py                      # Track B 단독 실행
+│   ├── data_loader.py              # 시계열 데이터 준비 및 누수 방지
+│   ├── baselines.py                # Naive, SMA, EMA, Linear Regression
+│   ├── models.py                   # LSTM, GRU, Attention-LSTM
+│   ├── trainer.py                  # 시계열 모델 학습
+│   ├── data/AAPL_3y_daily.csv      # 오프라인 실행용 주가 데이터 캐시
+│   ├── tests/                      # Track B 테스트
+│   └── reports/                    # Track B 결과 JSON, 표, 그래프
+├── src/common/                     # 두 트랙이 함께 사용하는 평가/시각화 도구
+├── tests/                          # 공통 테스트
+└── reports/                        # 통합 진단 리포트와 학습 곡선
 ```
 
 ---
@@ -95,8 +81,8 @@ transreg/
 | **Full Fine-tuning** (전체 미세 조정) | 11,179,077 개 | 11,179,077 개 | 100.00% | **0.4576** | **82.40%** | **Optimal Fit** (**+12.00%p 우수**) |
 
 ### 4.3. 오차 분석 결과 (37건 추출, 최소 30건 이상 충족)
-- 상세 오차 분석표: [reports/error_analysis_table.md](reports/error_analysis_table.md)
-- 오분류 갤러리 시각화: [reports/figures/error_analysis_gallery.png](reports/figures/error_analysis_gallery.png)
+- 상세 오차 분석표: [track_a/reports/error_analysis_table.md](track_a/reports/error_analysis_table.md)
+- 오분류 갤러리 시각화: [track_a/reports/figures/error_analysis_gallery.png](track_a/reports/figures/error_analysis_gallery.png)
 
 | 실패 원인 태그 | 오분류 건수 | 비율 (%) | 주요 원인 및 개선 방향 |
 |---|---|---|---|
@@ -117,9 +103,9 @@ transreg/
 4. **동일 구간 평가**: 모든 모델은 동일한 151개 Test 거래일 구간에서 **원래 가격 단위(USD, 달러)**로 역정규화하여 평가
 
 ### 5.2. 모델별 성능 비교표 (실제 코드 측정 결과)
-- 상세 리포트: [reports/baseline_comparison_report.md](reports/baseline_comparison_report.md)
-- 예측 vs 실제 그래프: [reports/figures/timeseries_prediction_vs_actual.png](reports/figures/timeseries_prediction_vs_actual.png)
-- 모델 비교 막대그래프: [reports/figures/baseline_comparison_barplot.png](reports/figures/baseline_comparison_barplot.png)
+- 상세 리포트: [track_b/reports/baseline_comparison_report.md](track_b/reports/baseline_comparison_report.md)
+- 예측 vs 실제 그래프: [track_b/reports/figures/timeseries_prediction_vs_actual.png](track_b/reports/figures/timeseries_prediction_vs_actual.png)
+- 모델 비교 막대그래프: [track_b/reports/figures/baseline_comparison_barplot.png](track_b/reports/figures/baseline_comparison_barplot.png)
 
 | 모델 구분 | 모델명 | MAE ($) | RMSE ($) | MAPE (%) | SMA(20) 대비 MAE 개선율 |
 |---|---|---|---|---|---|
@@ -180,9 +166,15 @@ pip install -r requirements.txt
 python scripts/run_all_pipeline.py
 ```
 
+Track 하나만 실행하려면 해당 폴더의 스크립트를 실행합니다:
+```bash
+python track_a/run.py
+python track_b/run.py
+```
+
 ### 8.3. 단위 테스트 전체 실행 (Layer 2 검증)
 ```bash
-pytest tests/ -v
+pytest tests/ track_a/tests/ track_b/tests/ -v
 ```
 *(결과: 15개 테스트 100% PASS)*
 

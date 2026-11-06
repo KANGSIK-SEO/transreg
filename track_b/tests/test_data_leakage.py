@@ -8,13 +8,13 @@
 
 import numpy as np
 import pytest
-from src.track_b_timeseries.data_loader import TimeSeriesDataLoader
+from track_b.data_loader import TimeSeriesDataLoader
 
 
 @pytest.fixture
 def data_loader():
     return TimeSeriesDataLoader(
-        cache_path="/Users/kangsikseo/transreg/data/cache/AAPL_3y_daily.csv",
+        cache_path="track_b/data/AAPL_3y_daily.csv",
         window_size=20,
     )
 

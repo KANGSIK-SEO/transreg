@@ -1,7 +1,7 @@
 """Tests for Track A Few-shot constraints."""
 
 import pytest
-from src.track_a_transfer.dataset import FewShotImageDataset, CLASS_NAMES
+from track_a.dataset import FewShotImageDataset, CLASS_NAMES
 
 
 def test_fewshot_train_sample_count():

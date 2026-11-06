@@ -59,7 +59,7 @@ def plot_timeseries_prediction_vs_actual(
     predicted_prices: np.ndarray,
     dates: List[Any],
     model_name: str = "LSTM",
-    save_path: str = "reports/figures/timeseries_prediction_vs_actual.png",
+    save_path: str = "track_b/reports/figures/timeseries_prediction_vs_actual.png",
 ) -> None:
     """2. 시계열 예측 vs 실제 그래프 (실제값 파란선 + 예측값 빨간선)."""
     os.makedirs(os.path.dirname(save_path), exist_ok=True)
@@ -82,7 +82,7 @@ def plot_timeseries_prediction_vs_actual(
 
 def plot_baseline_comparison_barplot(
     comparison_dict: Dict[str, Dict[str, float]],
-    save_path: str = "reports/figures/baseline_comparison_barplot.png",
+    save_path: str = "track_b/reports/figures/baseline_comparison_barplot.png",
 ) -> None:
     """3. 베이스라인 vs 딥러닝 모델 비교 막대그래프 (MAE & RMSE)."""
     os.makedirs(os.path.dirname(save_path), exist_ok=True)
@@ -121,7 +121,7 @@ def plot_baseline_comparison_barplot(
 def plot_error_analysis_gallery(
     misclassified_items: List[Dict[str, Any]],
     num_samples: int = 12,
-    save_path: str = "reports/figures/error_analysis_gallery.png",
+    save_path: str = "track_a/reports/figures/error_analysis_gallery.png",
 ) -> None:
     """4. 오분류 이미지 갤러리 (태그별 그룹화된 오분류 샘플)."""
     os.makedirs(os.path.dirname(save_path), exist_ok=True)
